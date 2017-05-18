@@ -31,10 +31,12 @@ public class Test {
     private long benchmarkSingleMethod() throws InvocationTargetException, IllegalAccessException {
         ArrayList<Long> times = new ArrayList<>();
         for(int i = 0; i < timesRun; i++ ){
+            benchmark.beforeBenchmark();
             long before = System.nanoTime();
             method.invoke(benchmark);
             long after = System.nanoTime();
             times.add(after - before);
+            benchmark.afterBenchmark();
         }
         long averageTime = times.stream().reduce((x,y) -> x+y).get()/timesRun;
         return averageTime;
@@ -42,10 +44,12 @@ public class Test {
     private long benchmarkSingleMethodWithArgument(int argument) throws InvocationTargetException, IllegalAccessException {
         ArrayList<Long> times = new ArrayList<>();
         for(int i = 0; i < timesRun; i++ ){
+            benchmark.beforeBenchmark();
             long before = System.nanoTime();
             method.invoke(benchmark, argument);
             long after = System.nanoTime();
             times.add(after - before);
+            benchmark.afterBenchmark();
         }
         long averageTime = times.stream().reduce((x,y) -> x+y).get()/timesRun;
         return averageTime;
