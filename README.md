@@ -5,10 +5,16 @@ Every method that is being benchmarked is run milion times, and the resulting ti
 
 ```java
 class MyBenchmark implements Benchmark {
+    
     public void setUp(){
-        /// methods that will be invoked once, before all benchmarks happen   
+        /// set up methods that will be invoked once, before all benchmarks happen   
     }
 
+    @Args(arguments = {10, 100, 1000, 10000})
+    public void setUpWithArgs(int arg){
+        /// set up method with argument that will be invoked once, before all benchmarks happen   
+    }
+    
     public void beforeBenchmark(){
         /// methods that will be invoked before every single method run
     }
@@ -23,13 +29,14 @@ class MyBenchmark implements Benchmark {
     }
 
     @Test
-    @Args(arguments={10,100,1000})
+    @Args(arguments = {10, 100, 1000})
     public void pieceOfCodeWithArguments(int arg){
         someMethodWithArgs(arg);
     }
 }
 ```
-Implementing ```setUp()```, ```beforeBenchmark()```, and ```afterBenchmark()``` is not mandatory.
+Implementing ```setUp()```, ```setUpWithArgs(int)```, ```beforeBenchmark()``` and ```afterBenchmark()``` is not mandatory.
+If ```setUp()``` and ```setUpWithArgs(int)``` are implemented, ```setUpWithArgs(int)``` will be invoked.
 Also you have to create:
 ```java
 class Main{
@@ -41,10 +48,12 @@ class Main{
 ## Maven
 add to your pom.xml file
 ```xml
-<repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
-</repository>
+<repositories>
+    <repository>
+          <id>jitpack.io</id>
+          <url>https://jitpack.io</url>
+    </repository>
+</repositories>
 ```
 below after ``` <dependencies> ``` tag add:
 ```xml
