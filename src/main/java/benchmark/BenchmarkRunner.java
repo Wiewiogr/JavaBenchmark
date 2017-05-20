@@ -53,9 +53,8 @@ public class BenchmarkRunner {
 
         test.name = new StringBuilder()
                 .append(method.getName())
-                .append("(")
+                .append(" with set up args : ")
                 .append(args)
-                .append(")")
                 .toString();
         test.benchmark = benchmark;
         test.method = method;
@@ -92,6 +91,7 @@ public class BenchmarkRunner {
     private void runAllTest(){
         for(Test test : tests){
             test.runMethod();
+            System.out.println(test.result.getformattedResult());
         }
 
     }
@@ -112,7 +112,7 @@ public class BenchmarkRunner {
     public static void run(){
         BenchmarkRunner runner = new BenchmarkRunner();
         runner.runBenchmarks();
-        runner.showResults();
+        //runner.showResults();
     }
 
     public static void main(String[] args) {

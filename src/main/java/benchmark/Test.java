@@ -17,7 +17,7 @@ public class Test {
     int times = 1;
     int[] arguments;
     Result result;
-    private int timesRun = 1000000;
+    private static int timesRun = 5000000;
     String name;
 
     public void runMethod(){
