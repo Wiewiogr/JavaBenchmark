@@ -6,6 +6,7 @@ import benchmark.result.SingleResult;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
@@ -29,30 +30,28 @@ public class Test {
     }
 
     private long benchmarkSingleMethod() throws InvocationTargetException, IllegalAccessException {
-        ArrayList<Long> times = new ArrayList<>();
+        Double time = 0.0;
         for(int i = 0; i < timesRun; i++ ){
             benchmark.beforeBenchmark();
             long before = System.nanoTime();
             method.invoke(benchmark);
             long after = System.nanoTime();
-            times.add(after - before);
+            time += 1.0*(after - before)/timesRun;
             benchmark.afterBenchmark();
         }
-        long averageTime = times.stream().reduce((x,y) -> x+y).get()/timesRun;
-        return averageTime;
+        return time.longValue();
     }
     private long benchmarkSingleMethodWithArgument(int argument) throws InvocationTargetException, IllegalAccessException {
-        ArrayList<Long> times = new ArrayList<>();
+        Double time = 0.0;
         for(int i = 0; i < timesRun; i++ ){
             benchmark.beforeBenchmark();
             long before = System.nanoTime();
             method.invoke(benchmark, argument);
             long after = System.nanoTime();
-            times.add(after - before);
+            time += 1.0*(after - before)/timesRun;
             benchmark.afterBenchmark();
         }
-        long averageTime = times.stream().reduce((x,y) -> x+y).get()/timesRun;
-        return averageTime;
+        return time.longValue();
     }
 
     private void runMethodWithoutArguments(){
