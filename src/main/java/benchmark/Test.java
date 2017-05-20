@@ -18,7 +18,7 @@ public class Test {
     int[] arguments;
     Result result;
     private int timesRun = 1000000;
-
+    String name;
 
     public void runMethod(){
         if(times == 1) {
@@ -59,7 +59,7 @@ public class Test {
         try {
             benchmarkSingleMethod(); //rozgrzeweczka
             long time = benchmarkSingleMethod();
-            result = new SingleResult(time, method.getName());
+            result = new SingleResult(time, name);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
@@ -74,7 +74,7 @@ public class Test {
                 benchmarkSingleMethodWithArgument(arguments[i]); //rozgrzeweczka
                 runTimes[i] = benchmarkSingleMethodWithArgument(arguments[i]);
             }
-            result = new MultipleResults(runTimes, arguments, method.getName());
+            result = new MultipleResults(runTimes, arguments, name);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
