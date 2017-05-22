@@ -2,11 +2,16 @@ package benchmark;
 
 import benchmark.annotations.Args;
 import benchmark.annotations.Time;
+import benchmark.test.MultipleTest;
+import benchmark.test.SingleTest;
+import benchmark.test.Test;
+import benchmark.test.testInitializer.TestInitializerWithArgument;
+import benchmark.test.testInitializer.TestInitializerWithoutArguments;
 import org.reflections.Reflections;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -14,7 +19,7 @@ import java.util.List;
  */
 public class BenchmarkRunner {
 
-    List<Test> tests = new ArrayList<>();
+    LinkedList<Test> tests = new LinkedList<>();
 
     private List<Method> findMethodsToBenchmark(){
         Reflections reflections = new Reflections();
@@ -48,20 +53,20 @@ public class BenchmarkRunner {
     private Test createTestWithSetUpArguments(Method method, Class methodClass,  int args) throws IllegalAccessException, InstantiationException {
         Benchmark benchmark;
         benchmark = (Benchmark) methodClass.newInstance();
-        benchmark.setUpWithArgs(args);
-        Test test = new Test();
-
-        test.name = new StringBuilder()
+        Test test;
+        String name = new StringBuilder()
                 .append(method.getName())
                 .append(" with set up args : ")
                 .append(args)
                 .toString();
-        test.benchmark = benchmark;
-        test.method = method;
         if(method.getAnnotation(Args.class) != null){
             int[] arguments = method.getAnnotation(Args.class).arguments();
-            test.times = arguments.length;
-            test.arguments = arguments;
+            test = new MultipleTest(new TestInitializerWithArgument(args),
+                    name, benchmark,
+                    method, arguments.length, arguments);
+        } else {
+            test = new SingleTest(new TestInitializerWithArgument(args),
+                    name, benchmark, method);
         }
         return test;
     }
@@ -69,15 +74,16 @@ public class BenchmarkRunner {
     private Test createSingleTest(Method method, Class methodClass) throws InstantiationException, IllegalAccessException {
         Benchmark benchmark;
         benchmark = (Benchmark) methodClass.newInstance();
-        benchmark.setUp();
-        Test test = new Test();
-        test.name = method.getName();
-        test.benchmark = benchmark;
-        test.method = method;
+        Test test;
         if(method.getAnnotation(Args.class) != null){
             int[] arguments = method.getAnnotation(Args.class).arguments();
-            test.times = arguments.length;
-            test.arguments = arguments;
+            test = new MultipleTest(new TestInitializerWithoutArguments(),
+                    method.getName(), benchmark,
+                    method, arguments.length, arguments);
+        } else {
+            test = new SingleTest(new TestInitializerWithoutArguments(),
+                    method.getName(), benchmark, method);
+
         }
         return test;
     }
@@ -89,11 +95,11 @@ public class BenchmarkRunner {
     }
 
     private void runAllTest(){
-        for(Test test : tests){
+        while(!tests.isEmpty()){
+            Test test = tests.pop();
             test.runMethod();
-            System.out.println(test.result.getformattedResult());
+            System.out.println(test.getFormattedResult());
         }
-
     }
 
     public void runBenchmarks(){
@@ -101,12 +107,12 @@ public class BenchmarkRunner {
         runAllTest();
     }
 
-    public void showResults(){
-        for(Test test : tests){
-            if(test.result != null)
-                System.out.println(test.result.getformattedResult());
-        }
-    }
+//    public void showResults(){
+//        for(Test test : tests){
+//            if(test.result != null)
+//                System.out.println(test.getFormattedResult());
+//        }
+//    }
 
 
     public static void run(){
