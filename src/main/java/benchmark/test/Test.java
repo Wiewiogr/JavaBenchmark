@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * Created by student on 17.05.17.
  */
 public interface Test {
-    static int timesRun = 100_000;
+    static int timesRun = 1000;
 
     void runMethod();
     String getFormattedResult();
